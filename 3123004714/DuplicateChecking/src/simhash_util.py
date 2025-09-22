@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Simhash-based duplicate checking utility module
+基于 Simhash 的重复检查工具模块
 """
 import jieba
 import re
@@ -14,22 +14,22 @@ STOP_WORDS = {
 
 def _tokenize(text: str) -> List[Tuple[str, int]]:
     """
-    Tokenize text and return features with weights
+    对文本进行分词并返回带权重的特征
 
     Args:
-        text: Raw text string
+        text: 原始文本字符串
 
     Returns:
-        List of (feature, weight) tuples
+        (特征, 权重)元组的列表
     """
-    # Clean text: remove punctuation and special characters
+    # 清理文本：移除标点符号和特殊字符
     text = re.sub(r'[^\w\s\u4e00-\u9fff]', ' ', text)
     text = re.sub(r'\s+', ' ', text).strip()
 
-    # Use jieba for Chinese word segmentation
+    # 使用 jieba 进行中文分词
     words = jieba.lcut(text)
 
-    # Filter out stopwords and single characters
+    # 过滤停用词和单个字符
     filtered_words = []
     for word in words:
         if (len(word) > 1 and
@@ -38,50 +38,50 @@ def _tokenize(text: str) -> List[Tuple[str, int]]:
             word.strip()):
             filtered_words.append(word)
 
-    # Count word frequencies as weights
+    # 统计词频作为权重
     word_counts = Counter(filtered_words)
 
-    # Return list of (word, weight) tuples
+    # 返回 (单词, 权重) 元组的列表
     return list(word_counts.items())
 
 class Simhash:
-    """Simhash calculation class"""
+    """Simhash 计算类"""
 
     def __init__(self, features: List[Tuple[str, int]]):
         """
-        Initialize Simhash with features
+        使用特征初始化 Simhash
 
         Args:
-            features: List of (feature, weight) tuples
+            features: (特征, 权重)元组的列表
         """
         self.features = features
         self.hash_value = None
 
     def build(self) -> int:
         """
-        Build Simhash fingerprint from features
+        从特征构建 Simhash 指纹
 
         Returns:
-            64-bit integer fingerprint
+            64位整数指纹
         """
-        # Initialize 64-dimensional vector
+        # 初始化64维向量
         v = [0] * 64
 
         for feature, weight in self.features:
-            # Hash feature to 64-bit integer
+            # 将特征哈希为64位整数
             feature_hash = hash(feature)
 
-            # Ensure it's a 64-bit unsigned integer
+            # 确保是64位无符号整数
             feature_hash = feature_hash & ((1 << 64) - 1)
 
-            # Update vector based on hash bits
+            # 根据哈希位更新向量
             for i in range(64):
                 if (feature_hash >> i) & 1:
                     v[i] += weight
                 else:
                     v[i] -= weight
 
-        # Build final fingerprint
+        # 构建最终指纹
         fingerprint = 0
         for i in range(64):
             if v[i] > 0:
@@ -92,41 +92,41 @@ class Simhash:
 
 def hamming_distance(hash1: int, hash2: int) -> int:
     """
-    Calculate Hamming distance between two hashes
+    计算两个哈希值之间的汉明距离
 
     Args:
-        hash1: First hash value
-        hash2: Second hash value
+        hash1: 第一个哈希值
+        hash2: 第二个哈希值
 
     Returns:
-        Number of differing bits
+        不同位的数量
     """
     xor_result = hash1 ^ hash2
     return bin(xor_result).count('1')
 
 def calculate_similarity(text1: str, text2: str) -> float:
     """
-    Calculate similarity between two texts using Simhash
+    使用 Simhash 计算两个文本之间的相似度
 
     Args:
-        text1: First text
-        text2: Second text
+        text1: 第一个文本
+        text2: 第二个文本
 
     Returns:
-        Similarity score between 0.0 and 1.0
+        0.0 到 1.0 之间的相似度分数
     """
-    # Tokenize both texts
+    # 对两个文本进行分词
     features1 = _tokenize(text1)
     features2 = _tokenize(text2)
 
-    # Build Simhash fingerprints
+    # 构建 Simhash 指纹
     hash1 = Simhash(features1).build()
     hash2 = Simhash(features2).build()
 
-    # Calculate Hamming distance
+    # 计算汉明距离
     distance = hamming_distance(hash1, hash2)
 
-    # Convert to similarity score
+    # 转换为相似度分数
     similarity = (64 - distance) / 64
 
     return similarity

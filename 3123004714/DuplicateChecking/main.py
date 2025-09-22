@@ -7,17 +7,25 @@ from src.simhash_util import calculate_similarity
 def validate_args(args):
     """验证命令行参数"""
     if len(args) != 4:
-        raise ValueError("需要3个参数：原文路径 抄袭文路径 输出路径")
+        raise ValueError("需要3个参数：原文的文件路径 抄袭文的文件路径 输出路径")
 
     orig_path = Path(args[1])
     copy_path = Path(args[2])
+    output_path = Path(args[3])
 
-    if not orig_path.exists():
-        raise FileNotFoundError(f"原文文件不存在：{orig_path}")
-    if not copy_path.exists():
-        raise FileNotFoundError(f"抄袭文件不存在：{copy_path}")
+    # 检查路径是否为有效地址（相对或绝对）
+    for path, name in [(orig_path, "原文路径"), (copy_path, "抄袭文件路径"), (output_path, "输出路径")]:
+        # 检查路径字符串是否有效（非空且不是纯分隔符）
+        if not str(path).strip() or str(path).strip() in ['/', '\\']:
+            raise ValueError(f"{name}不是有效地址：{path}")
+        # 检查路径格式是否有效
+        try:
+            path.resolve()  # 尝试解析路径
+        except Exception:
+            raise ValueError(f"{name}不是有效地址：{path}")
 
-    return orig_path, copy_path, Path(args[3])
+
+    return orig_path, copy_path, output_path
 
 def main():
     try:
