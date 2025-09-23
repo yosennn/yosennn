@@ -23,7 +23,9 @@ DuplicateChecking/
 │   └── run_tests.py       # 测试运行脚本
 ├── data/                # 测试数据文件
 ├── output/              # 输出结果目录
-└── docs/                # 开发文档
+├── docs/                # 开发文档
+├── .coveragerc          # 覆盖率配置文件
+└── htmlcov/             # HTML 覆盖率报告目录
 ```
 
 ## 安装和使用
@@ -36,7 +38,7 @@ DuplicateChecking/
 ### 安装依赖
 
 ```bash
-pip install jieba
+pip install -r requirements.txt
 ```
 
 ### 使用方法
@@ -87,8 +89,10 @@ python main.py data/orig.txt data/orig_0.8_add.txt output/result.txt
 
 ### 测试框架
 - **pytest**: 主要测试框架
+- **pytest-cov**: 测试覆盖率工具
 - **测试配置**: `tests/pytest.ini`
 - **测试运行器**: `tests/run_tests.py`
+- **覆盖率配置**: `.coveragerc`
 
 ### 测试用例
 
@@ -119,8 +123,14 @@ python -m pytest tests/test_similarity.py::TestSimhashSimilarity::test_identical
 # 详细输出模式
 python -m pytest tests/ -v
 
-# 显示测试覆盖率（需安装 pytest-cov）
+# 显示测试覆盖率
 python -m pytest tests/ --cov=src
+
+# 生成 HTML 覆盖率报告
+python -m pytest tests/ --cov=src --cov-report=html
+
+# 显示覆盖率明细（包含未覆盖行号）
+python -m pytest tests/ --cov=src --cov-report=term-missing
 ```
 
 ### 测试配置
@@ -129,6 +139,11 @@ python -m pytest tests/ --cov=src
 - 测试路径设置
 - 测试文件命名规则
 - 输出格式配置
+
+`.coveragerc` 配置文件包含：
+- 覆盖率源代码路径
+- 忽略文件和目录配置
+- 报告格式设置
 
 ### 预期结果
 
