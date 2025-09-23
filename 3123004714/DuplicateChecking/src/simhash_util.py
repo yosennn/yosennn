@@ -12,6 +12,7 @@ STOP_WORDS = {
     '的', '了', '是', '我', '你', '他', '她', '它', '们', '在', '有', '和', '就', '不', '人', '都', '一', '个', '上', '也', '很', '到', '说', '要', '去', '你', '会', '着', '没有', '看', '好', '自己', '这', '那', '里', '就是', '还是', '这', '这个', '那个', '什么', '怎么', '为什么', '因为', '所以', '如果', '但是', '可是', '然而', '而且', '并且', '或者', '吗', '呢', '吧', '啊', '啦', '呀', '哦', '唉', '嘿', '哼', '喂', '嗯', '哦', '噢', '呵', '喔', '哟', '呜', '哗', '啪', '咚', '滴', '哒', '叮', '当', '哗啦', '咕咚', '滴答', '叮当', '啪嗒', '呼呼', '沙沙', '淅淅', '沥沥', '哗哗', '咚咚', '嘀嗒', '叮咚', '砰砰', '轰轰', '隆隆', '滴滴', '嘟嘟', '铃铃', '嗒嗒', '啪啪', '咣咣', '哐哐', '铛铛', '梆梆', '当当', '锵锵', '咚咚', '哐哐', '铛铛', '梆梆', '当当', '锵锵', '咚咚', '哐哐', '铛铛', '梆梆', '当当', '锵锵'
 }
 
+
 def _tokenize(text: str) -> List[Tuple[str, int]]:
     """
     对文本进行分词并返回带权重的特征
@@ -32,10 +33,8 @@ def _tokenize(text: str) -> List[Tuple[str, int]]:
     # 过滤停用词和单个字符
     filtered_words = []
     for word in words:
-        if (len(word) > 1 and
-            word not in STOP_WORDS and
-            not word.isdigit() and
-            word.strip()):
+        if (len(word) > 1 and word not in STOP_WORDS and
+                not word.isdigit() and word.strip()):
             filtered_words.append(word)
 
     # 统计词频作为权重
@@ -43,6 +42,7 @@ def _tokenize(text: str) -> List[Tuple[str, int]]:
 
     # 返回 (单词, 权重) 元组的列表
     return list(word_counts.items())
+
 
 class Simhash:
     """Simhash 计算类"""
@@ -90,6 +90,7 @@ class Simhash:
         self.hash_value = fingerprint
         return fingerprint
 
+
 def hamming_distance(hash1: int, hash2: int) -> int:
     """
     计算两个哈希值之间的汉明距离
@@ -103,6 +104,7 @@ def hamming_distance(hash1: int, hash2: int) -> int:
     """
     xor_result = hash1 ^ hash2
     return bin(xor_result).count('1')
+
 
 def calculate_similarity(text1: str, text2: str) -> float:
     """

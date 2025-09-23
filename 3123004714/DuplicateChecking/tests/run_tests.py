@@ -6,6 +6,7 @@ import subprocess
 import sys
 from pathlib import Path
 
+
 def run_pytest():
     """使用项目配置运行 pytest"""
     # 获取项目根目录
@@ -30,6 +31,7 @@ def run_pytest():
         return result.returncode
     finally:
         os.chdir(original_dir)
+
 
 if __name__ == "__main__":
     exit_code = run_pytest()

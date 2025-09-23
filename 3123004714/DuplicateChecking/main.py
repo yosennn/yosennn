@@ -4,6 +4,7 @@ import logging
 from pathlib import Path
 from src.simhash_util import calculate_similarity
 
+
 def validate_args(args):
     """验证命令行参数"""
     if len(args) != 4:
@@ -14,7 +15,8 @@ def validate_args(args):
     output_path = Path(args[3])
 
     # 检查路径是否为有效地址（相对或绝对）
-    for path, name in [(orig_path, "原文路径"), (copy_path, "抄袭文件路径"), (output_path, "输出路径")]:
+    for path, name in [(orig_path, "原文路径"), (copy_path, "抄袭文件路径"),
+                       (output_path, "输出路径")]:
         # 检查路径字符串是否有效（非空且不是纯分隔符）
         if not str(path).strip() or str(path).strip() in ['/', '\\']:
             raise ValueError(f"{name}不是有效地址：{path}")
@@ -24,8 +26,8 @@ def validate_args(args):
         except Exception:
             raise ValueError(f"{name}不是有效地址：{path}")
 
-
     return orig_path, copy_path, output_path
+
 
 def main():
     try:
@@ -49,6 +51,7 @@ def main():
     except Exception as e:
         logging.error(f"程序错误：{e}")
         sys.exit(1)
+
 
 if __name__ == '__main__':
     main()

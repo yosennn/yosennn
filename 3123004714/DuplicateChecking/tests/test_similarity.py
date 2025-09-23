@@ -2,8 +2,8 @@
 相似度计算测试
 """
 
-import pytest
 from src.simhash_util import calculate_similarity
+
 
 class TestSimhashSimilarity:
     """Simhash相似度计算测试类"""
