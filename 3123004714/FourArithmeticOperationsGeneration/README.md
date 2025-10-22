@@ -162,28 +162,85 @@ pytest -m slow
 - 性能测试：确保大规模数据处理能力
 - 边界测试：验证极端情况处理
 
+## 性能分析
+
+### 性能概况
+- **生成速度**: 1000道题目约需22秒
+- **成功率**: 表达式生成成功率约92%
+- **内存使用**: 优化的分数计算和表达式存储
+
+### 主要性能瓶颈
+根据cProfile分析结果，主要性能消耗在：
+
+1. **evaluate_postfix()** - 后缀表达式计算 (35.9% 累积时间)
+2. **evaluate_expression()** - 表达式求值 (65.2% 累积时间)
+3. **shunting_yard()** - 逆波兰式转换 (16.5% 累积时间)
+4. **正则表达式操作** - 频繁的模式匹配和编译
+5. **parse_number()** - 数字解析和Fraction创建
+
+### 性能分析工具
+```bash
+# 运行完整性能分析
+python performance/run_analysis.py run
+
+# 查看生成的报告文件
+python performance/run_analysis.py list
+
+# 单独运行分析脚本
+python performance/scripts/performance_analysis.py
+python performance/scripts/performance_visualization.py
+```
+
+### 优化建议
+- 预编译正则表达式模式
+- 实现表达式计算结果缓存
+- 优化Fraction对象创建和重用
+- 考虑并行处理大规模生成任务
+
 ## 项目结构
 
 ```
 FourArithmeticOperationsGeneration/
-├── main.py                    # 主程序文件
-├── src/
-│   ├── __init__.py           # 源代码包初始化
-│   └── Expression.py         # 表达式类定义
-├── tests/
-│   ├── __init__.py           # 测试包初始化
-│   ├── conftest.py           # pytest配置
-│   ├── test_expression.py    # Expression类测试
-│   ├── test_number_utils.py  # 数字工具测试
+├── main.py                      # 主程序文件
+├── src/                         # 源代码目录
+│   ├── __init__.py             # 源代码包初始化
+│   └── Expression.py           # 表达式类定义
+├── tests/                      # 测试目录
+│   ├── __init__.py             # 测试包初始化
+│   ├── conftest.py             # pytest配置
+│   ├── test_expression.py      # Expression类测试
+│   ├── test_number_utils.py    # 数字工具测试
 │   ├── test_expression_generation.py  # 表达式生成测试
 │   ├── test_expression_evaluation.py  # 表达式计算测试
-│   ├── test_deduplication.py # 去重机制测试
-│   ├── test_grading.py       # 批改系统测试
-│   ├── test_integration.py   # 集成测试
-│   └── test_run_all.py       # 测试运行脚本
-├── docs/
-│   └── 程序设计与实现文档.md   # 详细设计文档
-├── pyproject.toml            # 项目配置
-├── README.md                 # 项目说明
+│   ├── test_deduplication.py   # 去重机制测试
+│   ├── test_grading.py         # 批改系统测试
+│   ├── test_integration.py     # 集成测试
+│   └── test_run_all.py         # 测试运行脚本
+├── performance/                # 性能分析目录
+│   ├── README.md               # 性能分析模块说明
+│   ├── run_analysis.py         # 性能分析运行脚本
+│   ├── scripts/                # 分析脚本目录
+│   │   ├── performance_analysis.py      # 基础性能分析
+│   │   ├── performance_visualization.py # 性能可视化
+│   │   └── optimization_examples.py    # 优化建议和示例
+│   └── reports/                # 分析报告目录
+│       ├── performance_stats.prof      # cProfile统计数据
+│       ├── performance_report.html     # HTML格式报告
+│       ├── performance_analysis.png    # 性能分析图表
+│       └── bottleneck_analysis.md     # 瓶颈分析报告
+├── docs/                       # 文档目录
+│   └── 程序设计与实现文档.md     # 详细设计文档
+├── pyproject.toml              # 项目配置
+├── README.md                   # 项目说明
+└── CLAUDE.md                   # Claude Code指导文件
 ```
+
+## 生成的分析文件
+
+运行性能分析后会在 `performance/reports/` 目录下生成以下文件：
+- `performance_stats.prof` - cProfile性能统计文件
+- `performance_report.html` - 详细性能分析报告（HTML格式）
+- `performance_analysis.png` - 性能分析可视化图表
+- `bottleneck_analysis.md` - 性能瓶颈分析报告（Markdown格式）
+- `optimization_examples.py` - 优化建议和代码示例（在scripts目录）
 
