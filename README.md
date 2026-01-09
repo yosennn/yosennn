@@ -1,4 +1,6 @@
-## Hi there 👋
+**Greeting**. I am Yosen Wang, a student **developer** from Guang Zhou, China. 👋👋👋
+
+My Language: 简体中文, English
 
 <!--
 **yosennn/yosennn** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
